@@ -4,8 +4,7 @@ import React,{ useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import styles from './Login.module.css';
 import Button from 'react-bootstrap/Button';
-import ErrorModal from '../components/ErrorModal';
-import config from '../../backend.config.json';
+
 
 function LoginPage() {
   const navigate = useNavigate();
