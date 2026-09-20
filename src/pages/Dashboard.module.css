@@ -1,0 +1,95 @@
+.dashboard-body {
+  width: 100vw;
+  height: 90vh;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.dashboad-main-container {
+  flex: 1;
+}
+
+.pres-card {
+  width: auto;
+  max-width: 20vw;
+  min-width: 250px !important;
+  aspect-ratio: 2 / 1;
+  overflow: hidden;
+  /* Cut overflow to keep 2/1 */
+  display: flex;
+  flex-direction: column;
+  /* img and body get height by a precentage*/
+  /* 让 img 和 body 按比例分配高度 */
+}
+
+.card-img {
+  width: 100%;
+  height: 55%;
+  /* Img will take 55% of whole card height*/
+  /* 占卡片高度的 55%，剩下 45% 给文字和按钮 */
+  object-fit: cover;
+  object-position: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  /* Prevent shrink 防止内容撑开时图片被压缩 */
+}
+
+/* Edit the padding in bootstrap card body */
+/* 压缩 bootstrap card-body 默认 padding，空间本来就不大 */
+.card-body {
+  padding: 3px 16px !important;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 16px;
+  margin-bottom: 2px;
+  word-break: break-all;
+}
+
+.card-text {
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.slides-number {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.card-list-container {
+  margin: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0 5vw;
+}
+
+.card-btn-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+@media (max-width: 920px) {
+  .pres-card {
+    width: 40vw ;
+    max-width: 400px ;
+    min-width: 340;
+    
+  }
+
+}
+
+@media (max-width: 650px) {
+  .pres-card {
+    width: 320px ;
+    max-width: 400px ;
+    min-width: 340;
+  }
+}
