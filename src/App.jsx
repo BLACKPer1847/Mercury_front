@@ -20,7 +20,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
 
         {/* Function Pages */}
-        <Route path='/dashboard/:id' element={<DashBoard />} />
+        <Route path='/dashboard' element={<DashBoard />} />
       </Routes>
     </BrowserRouter>
   )
