@@ -37,6 +37,16 @@ async function request(path, options = {}) {
   return data
 }
 
+// auth检查和登出工具
+export const auth = {
+  isLoggedIn: () => !!localStorage.getItem('token'),
+  logout: () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('username')
+  },
+  getUsername: () => localStorage.getItem('username'),
+}
+
 // 导出具体的 API 方法
 export const authApi = {
   register: (username, password) =>

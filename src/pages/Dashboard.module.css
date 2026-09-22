@@ -1,0 +1,73 @@
+.dashboard-page {
+  position: relative;             /* 添加相对定位，作为伪元素的参考 */
+  min-height: 100vh;              /* 占满视口高度 */
+  overflow: hidden;               /* 防止子元素溢出撑开 */
+}
+
+/* 创建一个伪元素来单独存放背景图 */
+.dashboard-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/clock.png');
+  background-size: cover;         /* 等比缩放，铺满容器，超出部分裁掉 */
+  background-position: center;    /* 居中显示，裁掉四周 */
+  background-repeat: no-repeat;
+  opacity: 0.3;                   /* 设置透明度，只影响背景 */
+  z-index: 0;                     /* 确保在最底层 */
+}
+
+/* 确保子组件的层级在背景之上（可选，如果子组件被盖住的话） */
+.dashboard-page > * {
+  position: relative;
+  z-index: 1;
+}
+
+.header-container{
+	display: flex;
+	padding: 5px 20px;
+	gap: 5px 20px;
+	justify-content: end;
+	height: 50px;
+	width: 100vw;
+}
+
+.main-container{
+	height:calc(100vh - 50px);
+	width: 100vw;
+	display: flex;
+}
+
+
+
+.quest-list-container{
+	width: 50vw;
+	height: 100%;
+}
+
+.tail-container{
+
+}
+
+/*未开发的日历部分*/
+.calender-container{
+	display: flex;
+	width: 50vw;
+	height: 100%;
+	background-color: rgba(255, 0, 0, 0.404);
+	align-items: center;
+	justify-content: center;
+	padding: 50px;
+}
+
+
+@media (max-width: 650px) {
+
+  .dashboard-page {
+  background-image: url('../assets/clock_phone.png');
+
+}
+}
