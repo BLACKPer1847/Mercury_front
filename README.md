@@ -1,19 +1,14 @@
-# React + Vite
+# 简介
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+面向多游戏玩家的日程聚合与提醒平台。目标用户同时游玩多款手游，难以逐一关注各游戏官方公告，容易错失签到、限时活动等关键节点。
 
-Currently, two official plugins are available:
+该仓库为React前端仓库。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+本项目分为两个阶段：
 
-## React Compiler
+第一阶段（MVP）<span style="color:green">（进行中）</span>：搭建通用任务管理框架，支持用户手动添加每日/长期待办，验证核心交互流程。
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+第二阶段<span style="color:red">（规划中）</span>：引入爬虫模块，自动从各游戏社媒/公告页抓取更新信息，通过关键词匹配提取活动事件，并汇入管理端事件模板；同时在前端Dashboard集成日历视图，直观展示待办的时间分布。
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+#### 目前后端已搭建完Mysql和登录/任务api以供测试。
