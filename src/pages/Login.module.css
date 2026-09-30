@@ -3,7 +3,11 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;              /* 占满视口高度 */
-  background-image: url('../assets/clock.webp');
+
+  background-color: #fca401;   /* 背景图加载前的占位色 */
+  background-image: url('/clock.webp');
+  transition: background-image 0.3s ease-in; /* 渐入 */
+  
   background-size: cover;         /* 等比缩放，铺满容器，超出部分裁掉 */
   background-position: center;    /* 居中显示，裁掉四周 */
   background-repeat: no-repeat;
@@ -70,7 +74,7 @@
 @media (max-width: 650px) {
 
   .login-page {
-  background-image: url('../assets/clock_phone.webp');
+  background-image: url('/clock_phone.webp');
 
 }
 
