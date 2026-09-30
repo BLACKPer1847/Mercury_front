@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from './Login.module.css';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
-import logo from '../assets/clock_svg.svg';
+import logo from '../assets/clock_svg.webp';
 import { authApi } from '../api/client';
 
 

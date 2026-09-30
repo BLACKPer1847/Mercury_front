@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;              /* 占满视口高度 */
-  background-image: url('../assets/clock.png');
+  background-image: url('../assets/clock.webp');
   background-size: cover;         /* 等比缩放，铺满容器，超出部分裁掉 */
   background-position: center;    /* 居中显示，裁掉四周 */
   background-repeat: no-repeat;
@@ -54,7 +54,7 @@
 @media (max-width: 650px) {
 
   .register-page {
-  background-image: url('../assets/clock_phone.png');
+  background-image: url('../assets/clock_phone.webp');
 
 }
 
