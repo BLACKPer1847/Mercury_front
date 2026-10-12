@@ -4,6 +4,7 @@ import './App.css'
 import LoginPage from './pages/Login'
 import RegisterPage from './pages/Register'
 import DashBoard from './pages/Dashboard'
+import ProtectedRoute from './component/ProtectedRoute'
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Icon from bootstrap
@@ -20,7 +21,15 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
 
         {/* Function Pages */}
-        <Route path='/dashboard' element={<DashBoard />} />
+        {/* 用 <Navigate> 组件代替 navigate() 函数调用, 在渲染阶段处理重定向。 */}
+        <Route 
+          path='/dashboard'
+          element={
+          <ProtectedRoute>
+            <DashBoard />
+          </ProtectedRoute>
+        } 
+        />
       </Routes>
     </BrowserRouter>
   )

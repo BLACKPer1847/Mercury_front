@@ -18,11 +18,6 @@ function DashBoard() {
   const navigate = useNavigate();
   const [dailyTasks,updateDailytasks] = useState([]);
   const [longtermTasks,updatelongtermTasks] = useState([]);
-  
-  if (!auth.isLoggedIn()) {
-    navigate('/login')
-    return
-  }
 
   const handleComplete =()=>{
 
