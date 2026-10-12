@@ -19,11 +19,19 @@ export default function TaskItem({ task, index, onComplete, onDetailClick }) {
 	const [exiting, setExiting] = useState(false);
 	const daysLeft = isLongterm ? getDaysLeft(task.deadline) : null;
 	
-	const handleComplete = () => {
-    setExiting(true);                      // 先触发退出动画
-    setTimeout(() => {
-      onComplete(task.id);                 // 动画结束后通知父组件
-    }, 500);
+	// 不再使用纯乐观更新，如果更新失败动画会回滚
+	const handleComplete = async() => {
+    setExiting(true);                    // 立即播放动画
+	try {
+		await onComplete(task.id);         // 同时发请求
+		// 成功：父组件会更新 tasks，任务自然消失
+	} catch (err) {
+		// 失败：等动画播完，取消 exiting 状态，任务“滑回来”
+		setTimeout(() => {
+		setExiting(false);
+		alert('操作失败：' + err.message);
+		}, 500);
+	}
   };
 
 	return (

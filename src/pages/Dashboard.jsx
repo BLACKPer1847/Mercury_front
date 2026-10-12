@@ -19,8 +19,15 @@ function DashBoard() {
   const [dailyTasks,updateDailytasks] = useState([]);
   const [longtermTasks,updatelongtermTasks] = useState([]);
 
-  const handleComplete =()=>{
-
+  const handleComplete = async(id)=>{
+    try {
+      await taskApi.update(id, { status: 'done' });
+      // API 成功后，从本地状态移除
+      setDailyTasks(prev => prev.filter(t => t.id !== id));
+      setLongtermTasks(prev => prev.filter(t => t.id !== id));
+    } catch (err) {
+      throw err;   // 把错误抛给 TaskItem，让它处理动画回滚
+    }
   }
 
   const handleDetailClick =()=>{
