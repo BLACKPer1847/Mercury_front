@@ -17,7 +17,7 @@ function getColorClass(days) {
 export default function TaskItem({ task, index, onComplete, onDetailClick }) {
 	const showCountdown = task.type === 'longterm';
 	const [exiting, setExiting] = useState(false);
-	const daysLeft = isLongterm ? getDaysLeft(task.deadline) : null;
+	const daysLeft = showCountdown ? getDaysLeft(task.deadline) : null;
 	
 	// 不再使用纯乐观更新，如果更新失败动画会回滚
 	const handleComplete = async() => {
@@ -40,11 +40,11 @@ export default function TaskItem({ task, index, onComplete, onDetailClick }) {
       style={{ animationDelay: `${index * 80}ms` }}
 		>
 			<input
-        type="radio"
-        className={styles.radio}
-        onChange={() => handleComplete(task.id)}
-				disabled={exiting}
-      />
+        	type="radio"
+        	className={styles.radio}
+        	onChange={handleComplete}
+			disabled={exiting}
+      		/>
 			<div className={styles.content}>
 				<h3 className={styles.title}>{task.title}</h3>
 				{showCountdown && (
