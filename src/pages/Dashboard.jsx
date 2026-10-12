@@ -10,15 +10,28 @@ import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import { taskApi,auth } from '../api/client';
 
+import TaskList from '../component/TaskList';
+
 
 
 function DashBoard() {
   const navigate = useNavigate();
+  const [dailyTasks,updateDailytasks] = useState([]);
+  const [longtermTasks,updatelongtermTasks] = useState([]);
   
   if (!auth.isLoggedIn()) {
     navigate('/login')
     return
   }
+
+  const handleComplete =()=>{
+
+  }
+
+  const handleDetailClick =()=>{
+    
+  }
+
 
   const handleAddition =()=>{
 
@@ -37,16 +50,16 @@ function DashBoard() {
       {/* 头部工具栏 */}
       <div className={styles['header-container']}>
         <Button variant="success" onClick={handleAddition}>
-          <i class="bi bi-file-earmark-plus"></i> 添加待办
+          <i className="bi bi-file-earmark-plus"></i> 添加待办
         </Button>
         <Button variant="secondary">
-          <i class="bi bi-gear"></i> 管理事件
+          <i className="bi bi-gear"></i> 管理事件
         </Button>
         <Button variant="secondary">
-          <i class="bi bi-clipboard2-data"></i> 管理待办
+          <i className="bi bi-clipboard2-data"></i> 管理待办
         </Button>
         <Button variant="dark" onClick={handleExit}>
-          <i class="bi bi-box-arrow-right"></i> 登出
+          <i className="bi bi-box-arrow-right"></i> 登出
         </Button>
         
       </div>
@@ -62,6 +75,19 @@ function DashBoard() {
 
         {/* 右侧任务列表区域 */}
         <div className={styles['quest-list-container']}>
+          <TaskList
+            title="每日待办事项"
+            tasks={dailyTasks}
+            onComplete={handleComplete}
+            onDetailClick={handleDetailClick}
+          />
+
+          <TaskList
+            title="长期待办事项"
+            tasks={longtermTasks}
+            onComplete={handleComplete}
+            onDetailClick={handleDetailClick}
+          />
 
         </div>
       </div>

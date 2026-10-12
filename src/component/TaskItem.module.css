@@ -1,0 +1,124 @@
+/*Item主体的出入动画*/
+.item {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 200px;
+    opacity: 1;
+    transform: translateX(0);
+    animation: slideIn 0.4s ease-out backwards;
+
+}
+
+.item.exiting {
+    transform: translateX(-100%);
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    overflow: hidden;
+    pointer-events: none;
+    border-width: 0;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*自定义单选框*/
+.radio {
+    appearance: none;
+    /* 去掉浏览器默认样式 */
+    width: 22px;
+    height: 22px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    /* 圆形 */
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.radio:checked {
+    border-color: #3b82f6;
+    background-color: #3b82f6;
+}
+
+.radio:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+
+/*详情按钮*/
+.btnDetail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #9ca3af;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btnDetail:hover {
+    color: #2563eb;
+    background: #eff6ff;
+    transform: translateY(-1px);
+    /* 上浮 1px */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;   /* 关键：让 truncate 生效 */
+  padding: 0 16px;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.desc {
+  font-size: 12px;
+  font-weight: 500;
+  margin: 4px 0 0 0;
+}
+
+.normal   { color: #6b7280; }
+.warning  { color: #f97316; }
+.urgent   { color: #f87171; }
