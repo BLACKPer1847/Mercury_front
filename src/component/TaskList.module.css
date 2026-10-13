@@ -62,7 +62,6 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;              /* 任务卡之间的间距 */
 }
 
 .empty {
