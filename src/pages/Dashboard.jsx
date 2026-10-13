@@ -12,6 +12,7 @@ import Alert from 'react-bootstrap/Alert';
 import { taskApi,auth } from '../api/client';
 
 import TaskList from '../component/TaskList';
+import TaskModal from '../component/TaskModal';
 
 
 
@@ -21,6 +22,9 @@ function DashBoard() {
   const [longtermTasks,setlongtermTasks] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   // 拉取任务的函数
   const fetchTasks = async () => {
@@ -61,14 +65,39 @@ function DashBoard() {
     }
   }
 
-  const handleDetailClick =()=>{
-    
-  }
+  const handleDetailClick = async (id) => {
+    try {
+      const task = await taskApi.getOne(id);
+      setSelectedTask(task);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
 
   const handleAddition =()=>{
-
+    setShowModal(true);
   }
+
+  const handleCreateTask = async (taskData) => {
+    try {
+      await taskApi.create(taskData);
+      // 重新拉取列表
+      await fetchTasks();
+    } catch (err) {
+      throw err;   // 抛给 Modal 显示错误
+    }
+  };
+
+  const handleUpdateTask = async (taskData) => {
+    try {
+      await taskApi.update(selectedTask.id,taskData);
+      // 重新拉取列表
+      await fetchTasks();
+    } catch (err) {
+      throw err;   // 抛给 Modal 显示错误
+    }
+  };
 
   const handleExit =()=>{
     auth.logout()
@@ -133,6 +162,19 @@ function DashBoard() {
 
         </div>
       </div>
+
+      <TaskModal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        onSubmit={handleCreateTask}
+      />
+
+      <TaskModal
+        show={!!selectedTask}
+        onHide={() => setSelectedTask(null)}
+        onSubmit={handleUpdateTask}
+        initialData={selectedTask}
+      />
 
       {/* 页尾 */}
       <div className={styles['tail-container']}>
