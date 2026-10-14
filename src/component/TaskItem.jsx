@@ -51,7 +51,7 @@ export default function TaskItem({ task, index, onComplete, onDetailClick }) {
 				<h3 className={styles.title}>{task.title}</h3>
 				{showCountdown && (
 					<p className={`${styles.desc} ${getColorClass(daysLeft)}`}>
-						{daysLeft? `剩余天数：${daysLeft}`:"永久任务"}
+						{daysLeft != null? `剩余天数：${daysLeft}`:"永久任务"}
 					</p>
 				)}
 			</div>
