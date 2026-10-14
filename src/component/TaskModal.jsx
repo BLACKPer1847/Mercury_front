@@ -22,7 +22,7 @@ function formatDate(date) {
     return `${y}-${m}-${d}`;
 }
 
-export default function TaskModal({ show, onHide, onSubmit, initialData = null }) {
+export default function TaskModal({ show, onHide, onSubmit, onDelete, initialData = null }) {
     const isEdit = !!initialData;
 
     const [title, setTitle] = useState('');
@@ -133,6 +133,16 @@ export default function TaskModal({ show, onHide, onSubmit, initialData = null }
                 </Modal.Body>
 
                 <Modal.Footer>
+                    {isEdit && (
+                        <Button
+                        variant="outline-danger"
+                        onClick={onDelete}
+                        disabled={submitting}
+                        style={{ marginRight: 'auto' }}
+                        >
+                        删除
+                        </Button>
+                    )}
                     <Button variant="secondary" onClick={onHide} disabled={submitting}>
                         取消
                     </Button>

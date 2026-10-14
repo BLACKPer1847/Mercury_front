@@ -13,19 +13,28 @@ import { taskApi,auth } from '../api/client';
 
 import TaskList from '../component/TaskList';
 import TaskModal from '../component/TaskModal';
+import ConfirmModal from '../component/ConfirmModal';
 
 
 
 function DashBoard() {
   const navigate = useNavigate();
+  // ======待办任务列表========
   const [dailyTasks,setDailytasks] = useState([]);
   const [longtermTasks,setlongtermTasks] = useState([]);
+  // ======错误信息与加载状态========
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-
+  // ======详情页相关状态=====
   const [showModal, setShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  // =====删除功能的确认状态=====
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  // null = 不显示
+  // { id, title, originalTask } = 显示弹窗，状态内包含完整任务
+  const [deleting, setDeleting] = useState(false);
 
+  // ********** 函数部分 *********************
   // 拉取任务的函数
   const fetchTasks = async () => {
     setLoading(true);
@@ -98,6 +107,29 @@ function DashBoard() {
       throw err;   // 抛给 Modal 显示错误
     }
   };
+
+  const handleDeleteTask = async()=>{
+    if (!confirmDelete) return;
+    const { id, originalTask } = confirmDelete;
+    setDeleting(true);
+    try {
+      await taskApi.remove(id);
+      // 从本地状态移除
+      setSelectedTask(null);  // 先关详情弹窗
+      setConfirmDelete(null);   // 关闭删除确认弹窗
+      setDailytasks(prev => prev.filter(t => t.id !== id));
+      setlongtermTasks(prev => prev.filter(t => t.id !== id));
+    } catch (err) {
+      setError(err.message);
+      if (originalTask) {
+        setSelectedTask(originalTask);
+      }
+      setConfirmDelete(null);
+    } finally {
+      setDeleting(false);
+    }
+  
+  }
 
   const handleExit =()=>{
     auth.logout()
@@ -173,7 +205,32 @@ function DashBoard() {
         show={!!selectedTask}
         onHide={() => setSelectedTask(null)}
         onSubmit={handleUpdateTask}
+        onDelete={() => {
+          const taskToDelete = { 
+            id: selectedTask.id, 
+            title: selectedTask.title,
+            originalTask: selectedTask,  // 保存用于恢复
+          };
+          setSelectedTask(null);
+          setConfirmDelete(taskToDelete);
+        }}
         initialData={selectedTask}
+      />
+
+      <ConfirmModal //删除确认
+        show={!!confirmDelete}
+        title="确认删除"
+        message={`确定要删除「${confirmDelete?.title}」吗？此操作不可恢复。`}
+        confirmText="删除"
+        variant="danger"
+        loading={deleting}
+        onConfirm={handleDeleteTask}
+        onCancel={() => {
+          if (confirmDelete?.originalTask) {
+            setSelectedTask(confirmDelete.originalTask);
+          }
+          setConfirmDelete(null)
+        }}
       />
 
       {/* 页尾 */}
