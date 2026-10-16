@@ -1,7 +1,7 @@
 // Dashboard page
 
 
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import styles from "./Dashboard.module.css";
@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
-import { taskApi,auth } from '../api/client';
+import { taskApi, auth } from '../api/client';
 
 import TaskList from '../component/TaskList';
 import TaskModal from '../component/TaskModal';
@@ -20,8 +20,8 @@ import ConfirmModal from '../component/ConfirmModal';
 function DashBoard() {
   const navigate = useNavigate();
   // ======待办任务列表========
-  const [dailyTasks,setDailytasks] = useState([]);
-  const [longtermTasks,setlongtermTasks] = useState([]);
+  const [dailyTasks, setDailytasks] = useState([]);
+  const [longtermTasks, setlongtermTasks] = useState([]);
   // ======错误信息与加载状态========
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -41,11 +41,11 @@ function DashBoard() {
     setError('');
     try {
       const [daily, longterm] = await Promise.all([
-        taskApi.getAll('daily'),
-        taskApi.getAll('longterm'),
+        taskApi.getAll({ type: 'daily', status: 'pending', limit: 999 }),
+        taskApi.getAll({ type: 'longterm', status: 'pending', limit: 999 }),
       ]);
-      setDailytasks(daily);
-      setlongtermTasks(longterm);
+      setDailytasks(daily.items);
+      setlongtermTasks(longterm.items);
     } catch (err) {
       setError(err.message);
       // token 失效时跳回登录
@@ -63,7 +63,7 @@ function DashBoard() {
     fetchTasks();
   }, []);
 
-  const handleComplete = async(id)=>{
+  const handleComplete = async (id) => {
     try {
       await taskApi.update(id, { status: 'done' });
       // API 成功后，从本地状态移除
@@ -84,7 +84,7 @@ function DashBoard() {
   };
 
 
-  const handleAddition =()=>{
+  const handleAddition = () => {
     setShowModal(true);
   }
 
@@ -100,7 +100,7 @@ function DashBoard() {
 
   const handleUpdateTask = async (taskData) => {
     try {
-      await taskApi.update(selectedTask.id,taskData);
+      await taskApi.update(selectedTask.id, taskData);
       // 重新拉取列表
       await fetchTasks();
     } catch (err) {
@@ -108,7 +108,7 @@ function DashBoard() {
     }
   };
 
-  const handleDeleteTask = async()=>{
+  const handleDeleteTask = async () => {
     if (!confirmDelete) return;
     const { id, originalTask } = confirmDelete;
     setDeleting(true);
@@ -128,10 +128,10 @@ function DashBoard() {
     } finally {
       setDeleting(false);
     }
-  
+
   }
 
-  const handleExit =()=>{
+  const handleExit = () => {
     auth.logout()
     navigate('/login')
     return
@@ -140,104 +140,104 @@ function DashBoard() {
   return (
 
     <>
-    <div className={styles['dashboard-page']}>
-      {/* 头部工具栏 */}
-      <div className={styles['header-container']}>
-        <Button variant="success" onClick={handleAddition}>
-          <i className="bi bi-file-earmark-plus"></i> 添加待办
-        </Button>
-        <Button variant="secondary">
-          <i className="bi bi-gear"></i> 管理事件
-        </Button>
-        <Button variant="secondary">
-          <i className="bi bi-clipboard2-data"></i> 管理待办
-        </Button>
-        <Button variant="dark" onClick={handleExit}>
-          <i className="bi bi-box-arrow-right"></i> 登出
-        </Button>
-        
-      </div>
-
-      {/* 页面主体 */}
-      <div className={styles['main-container']}>
-        {/* 左侧日历区域 */}
-        <div className={styles['calender-container']}>
-          <Alert variant='secondary'>
-          日历功能在初版不会涉及，此处是留待开发区域
-          </Alert>
-        </div>
-
-        {/* 右侧任务列表区域 */}
-        <div className={styles['quest-list-container']}>
-          {loading ? (
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">加载中...</span>
-            </Spinner>
-          ):(
-          <>
-            <TaskList
-              title="每日待办事项"
-              tasks={dailyTasks}
-              onComplete={handleComplete}
-              onDetailClick={handleDetailClick}
-            />
-
-            <TaskList
-              title="长期待办事项"
-              tasks={longtermTasks}
-              onComplete={handleComplete}
-              onDetailClick={handleDetailClick}
-            />
-          </>
-          )}
-          
+      <div className={styles['dashboard-page']}>
+        {/* 头部工具栏 */}
+        <div className={styles['header-container']}>
+          <Button variant="success" onClick={handleAddition}>
+            <i className="bi bi-file-earmark-plus"></i> 添加待办
+          </Button>
+          <Button variant="secondary">
+            <i className="bi bi-gear"></i> 管理事件
+          </Button>
+          <Button variant="secondary">
+            <i className="bi bi-clipboard2-data"></i> 管理待办
+          </Button>
+          <Button variant="dark" onClick={handleExit}>
+            <i className="bi bi-box-arrow-right"></i> 登出
+          </Button>
 
         </div>
+
+        {/* 页面主体 */}
+        <div className={styles['main-container']}>
+          {/* 左侧日历区域 */}
+          <div className={styles['calender-container']}>
+            <Alert variant='secondary'>
+              日历功能在初版不会涉及，此处是留待开发区域
+            </Alert>
+          </div>
+
+          {/* 右侧任务列表区域 */}
+          <div className={styles['quest-list-container']}>
+            {loading ? (
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">加载中...</span>
+              </Spinner>
+            ) : (
+              <>
+                <TaskList
+                  title="每日待办事项"
+                  tasks={dailyTasks}
+                  onComplete={handleComplete}
+                  onDetailClick={handleDetailClick}
+                />
+
+                <TaskList
+                  title="长期待办事项"
+                  tasks={longtermTasks}
+                  onComplete={handleComplete}
+                  onDetailClick={handleDetailClick}
+                />
+              </>
+            )}
+
+
+          </div>
+        </div>
+
+        <TaskModal
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          onSubmit={handleCreateTask}
+        />
+
+        <TaskModal
+          show={!!selectedTask}
+          onHide={() => setSelectedTask(null)}
+          onSubmit={handleUpdateTask}
+          onDelete={() => {
+            const taskToDelete = {
+              id: selectedTask.id,
+              title: selectedTask.title,
+              originalTask: selectedTask,  // 保存用于恢复
+            };
+            setSelectedTask(null);
+            setConfirmDelete(taskToDelete);
+          }}
+          initialData={selectedTask}
+        />
+
+        <ConfirmModal //删除确认
+          show={!!confirmDelete}
+          title="确认删除"
+          message={`确定要删除「${confirmDelete?.title}」吗？此操作不可恢复。`}
+          confirmText="删除"
+          variant="danger"
+          loading={deleting}
+          onConfirm={handleDeleteTask}
+          onCancel={() => {
+            if (confirmDelete?.originalTask) {
+              setSelectedTask(confirmDelete.originalTask);
+            }
+            setConfirmDelete(null)
+          }}
+        />
+
+        {/* 页尾 */}
+        <div className={styles['tail-container']}>
+
+        </div>
       </div>
-
-      <TaskModal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        onSubmit={handleCreateTask}
-      />
-
-      <TaskModal
-        show={!!selectedTask}
-        onHide={() => setSelectedTask(null)}
-        onSubmit={handleUpdateTask}
-        onDelete={() => {
-          const taskToDelete = { 
-            id: selectedTask.id, 
-            title: selectedTask.title,
-            originalTask: selectedTask,  // 保存用于恢复
-          };
-          setSelectedTask(null);
-          setConfirmDelete(taskToDelete);
-        }}
-        initialData={selectedTask}
-      />
-
-      <ConfirmModal //删除确认
-        show={!!confirmDelete}
-        title="确认删除"
-        message={`确定要删除「${confirmDelete?.title}」吗？此操作不可恢复。`}
-        confirmText="删除"
-        variant="danger"
-        loading={deleting}
-        onConfirm={handleDeleteTask}
-        onCancel={() => {
-          if (confirmDelete?.originalTask) {
-            setSelectedTask(confirmDelete.originalTask);
-          }
-          setConfirmDelete(null)
-        }}
-      />
-
-      {/* 页尾 */}
-      <div className={styles['tail-container']}>
-
-      </div>
-    </div> 
 
     </>
 

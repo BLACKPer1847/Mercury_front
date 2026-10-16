@@ -63,8 +63,10 @@ export const authApi = {
 }
 
 export const taskApi = {
-  getAll: (type) =>
-    request(`/tasks${type ? `?type=${type}` : ''}`),
+  getAll: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/tasks${query ? `?${query}` : ''}`);
+  },
 
   getOne: (id) => request(`/tasks/${id}`),
 
