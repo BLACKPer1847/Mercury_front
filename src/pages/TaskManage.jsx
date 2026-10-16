@@ -26,7 +26,7 @@ function TaskManage() {
       const data = await taskApi.getAll({
         status: 'all',
         page,
-        limit: 20,
+        limit: 10,
       });
       setTasks(data.items);
       setPages(data.pages);

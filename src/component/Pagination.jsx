@@ -2,12 +2,12 @@ import Button from 'react-bootstrap/Button';
 import styles from './Pagination.module.css';
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-  if (totalPages <= 1) return null;
+  const safeTotal = Math.max(1, totalPages);
 
   // 生成要显示的页码：当前页附近 2 页
   const pages = [];
   const start = Math.max(1, currentPage - 2);
-  const end = Math.min(totalPages, currentPage + 2);
+  const end = Math.min(safeTotal, currentPage + 2);
   for (let i = start; i <= end; i++) {
     pages.push(i);
   }
@@ -41,17 +41,17 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         </Button>
       ))}
 
-      {end < totalPages && (
+      {end < safeTotal && (
         <>
-          {end < totalPages - 1 && <span className={styles.ellipsis}>...</span>}
-          <Button variant="outline-secondary" size="sm" onClick={() => onPageChange(totalPages)}>{totalPages}</Button>
+          {end < safeTotal - 1 && <span className={styles.ellipsis}>...</span>}
+          <Button variant="outline-secondary" size="sm" onClick={() => onPageChange(safeTotal)}>{safeTotal}</Button>
         </>
       )}
 
       <Button
         variant="outline-secondary"
         size="sm"
-        disabled={currentPage === totalPages}
+        disabled={currentPage === safeTotal}
         onClick={() => onPageChange(currentPage + 1)}
       >
         下一页
