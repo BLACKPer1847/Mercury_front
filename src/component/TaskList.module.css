@@ -56,6 +56,27 @@
   border-radius: 9999px;
 }
 
+/* 徽章 + "查看全部" 入口，放在 header 右侧 */
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.more {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+}
+
+.more:hover {
+  text-decoration: underline;
+}
+
 .list {
   flex: 1;
   overflow-y: auto;

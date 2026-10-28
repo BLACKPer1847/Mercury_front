@@ -16,6 +16,14 @@ import TaskModal from '../component/TaskModal';
 import ConfirmModal from '../component/ConfirmModal';
 import PageHeader from '../component/PageHeader';
 
+// 长期任务在首页只预览前几条（完整列表在「管理待办」页）
+const LONGTERM_PREVIEW_LIMIT = 5;
+
+// 长期任务的排序规则：星标优先 > 截止日期近的优先 > id 小的优先
+// 与后端约定的格式：sort / order 用逗号按位置对应
+const LONGTERM_SORT = 'is_starred,deadline,id';
+const LONGTERM_ORDER = 'desc,asc,asc';
+
 
 
 function DashBoard() {
@@ -23,6 +31,8 @@ function DashBoard() {
   // ======待办任务列表========
   const [dailyTasks, setDailytasks] = useState([]);
   const [longtermTasks, setlongtermTasks] = useState([]);
+  // 长期任务的总条数（列表被截断成前 5 条，徽章要显示真实总数）
+  const [longtermTotal, setlongtermTotal] = useState(0);
   // ======错误信息与加载状态========
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -37,16 +47,25 @@ function DashBoard() {
 
   // ********** 函数部分 *********************
   // 拉取任务的函数
-  const fetchTasks = async () => {
-    setLoading(true);
+  // silent = true 时不切 loading（完成/删除后补位用，避免整页闪 Spinner）
+  const fetchTasks = async ({ silent = false } = {}) => {
+    if (!silent) setLoading(true);
     setError('');
     try {
       const [daily, longterm] = await Promise.all([
         taskApi.getAll({ type: 'daily', status: 'pending', limit: 999 }),
-        taskApi.getAll({ type: 'longterm', status: 'pending', limit: 999 }),
+        // 长期任务由后端按规则排序并截断，前端不再自行 sort/slice
+        taskApi.getAll({
+          type: 'longterm',
+          status: 'pending',
+          limit: LONGTERM_PREVIEW_LIMIT,
+          sort: LONGTERM_SORT,
+          order: LONGTERM_ORDER,
+        }),
       ]);
       setDailytasks(daily.items);
       setlongtermTasks(longterm.items);
+      setlongtermTotal(longterm.total);
     } catch (err) {
       setError(err.message);
       // token 失效时跳回登录
@@ -55,7 +74,7 @@ function DashBoard() {
         navigate('/login');
       }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -70,6 +89,8 @@ function DashBoard() {
       // API 成功后，从本地状态移除
       setDailytasks(prev => prev.filter(t => t.id !== id));
       setlongtermTasks(prev => prev.filter(t => t.id !== id));
+      // 长期列表被截断成前 5 条，完成一条后需要重新拉取让后面的任务补位
+      await fetchTasks({ silent: true });
     } catch (err) {
       throw err;   // 把错误抛给 TaskItem，让它处理动画回滚
     }
@@ -120,6 +141,8 @@ function DashBoard() {
       setConfirmDelete(null);   // 关闭删除确认弹窗
       setDailytasks(prev => prev.filter(t => t.id !== id));
       setlongtermTasks(prev => prev.filter(t => t.id !== id));
+      // 删除后同样让长期列表补位
+      await fetchTasks({ silent: true });
     } catch (err) {
       setError(err.message);
       if (originalTask) {
@@ -163,6 +186,7 @@ function DashBoard() {
 
           {/* 右侧任务列表区域 */}
           <div className={styles['quest-list-container']}>
+            {error && <Alert variant="danger">{error}</Alert>}
             {loading ? (
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">加载中...</span>
@@ -176,11 +200,16 @@ function DashBoard() {
                   onDetailClick={handleDetailClick}
                 />
 
+                {/* 长期列表只显示前 5 条，徽章展示真实总数 */}
                 <TaskList
                   title="长期待办事项"
                   tasks={longtermTasks}
                   onComplete={handleComplete}
                   onDetailClick={handleDetailClick}
+                  badgeText={longtermTotal > longtermTasks.length
+                    ? `显示 ${longtermTasks.length} / 共 ${longtermTotal}`
+                    : `${longtermTotal} 个任务`}
+                  action={{ label: '查看全部', onClick: () => navigate('/taskmanage') }}
                 />
               </>
             )}
