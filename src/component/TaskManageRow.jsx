@@ -12,6 +12,13 @@ const TYPE_LABEL = {
   longterm: '长期任务',
 };
 
+// CSS Modules 的类名必须走映射对象，不能用 'status' + 大写首字母 拼出来
+const STATUS_CLASS = {
+  pending: styles.statusPending,
+  done: styles.statusDone,
+  archived: styles.statusArchived,
+};
+
 export default function TaskManageRow({ task, onDetailClick }) {
   return (
     <div className={styles.row}>
@@ -19,7 +26,7 @@ export default function TaskManageRow({ task, onDetailClick }) {
       <span className={`${styles.badgeType} ${task.type === 'daily' ? styles.typeDaily : styles.typeLongterm}`}>
         {TYPE_LABEL[task.type]}
       </span>
-      <span className={`${styles.badgeStatus} ${styles['status' + task.status.charAt(0).toUpperCase() + task.status.slice(1)]}`}>
+      <span className={`${styles.badgeStatus} ${STATUS_CLASS[task.status] ?? ''}`}>
         {STATUS_LABEL[task.status]}
       </span>
       <span>{task.deadline || '不适用'}</span>

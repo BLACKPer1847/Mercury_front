@@ -8,6 +8,9 @@
 
 import { useEffect, useState } from 'react';
 
+// 日期互转统一放在 utils/date.js，这里再导出一份，TaskForm 等已有 import 路径不用改
+export { parseDate, formatDate } from '../utils/date';
+
 export const TYPE_OPTIONS = [
   { value: 'daily', label: '每日任务' },
   { value: 'longterm', label: '长期任务' },
@@ -18,23 +21,6 @@ export const STATUS_OPTIONS = [
   { value: 'done', label: '已完成' },
   { value: 'archived', label: '已归档' },
 ];
-
-// 'YYYY-MM-DD' -> Date
-// 按本地时区构造，避免 new Date('2026-10-01') 被当成 UTC 零点导致日期少一天
-export function parseDate(str) {
-  if (!str) return null;
-  const [y, m, d] = str.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
-
-// Date -> 'YYYY-MM-DD'
-export function formatDate(date) {
-  if (!date) return '';
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
 
 // 后端返回的任务对象 -> 表单值（字段缺失时给出可用的初值）
 export function taskToFormValues(task) {

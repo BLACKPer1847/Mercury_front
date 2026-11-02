@@ -1,10 +1,11 @@
 import styles from "./TaskItem.module.css";
-import  { useState, useEffect } from 'react';
+import  { useState } from 'react';
+import { diffInDays } from '../utils/date';
 
+// 剩余天数按日历天算（今天=0、明天=1、已过期为负数），
+// 和 TaskForm/TaskEdit 共用 utils/date 的解析规则，不再直接 new Date(deadline)
 function getDaysLeft(deadline) {
-	if (!deadline) return null;
-	const diff = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
-	return diff;
+	return diffInDays(deadline);
 }
 
 function getColorClass(days) {
@@ -51,7 +52,11 @@ export default function TaskItem({ task, index, onComplete, onDetailClick }) {
 				<h3 className={styles.title}>{task.title}</h3>
 				{showCountdown && (
 					<p className={`${styles.desc} ${getColorClass(daysLeft)}`}>
-						{daysLeft != null? `剩余天数：${daysLeft}`:"永久任务"}
+						{daysLeft == null
+							? "永久任务"
+							: daysLeft < 0
+								? `已过期 ${-daysLeft} 天`
+								: `剩余天数：${daysLeft}`}
 					</p>
 				)}
 			</div>
