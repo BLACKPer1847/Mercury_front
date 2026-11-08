@@ -1,17 +1,23 @@
+import { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Nav from 'react-bootstrap/Nav';
 
 import TaskForm from './TaskForm';
+import TemplatePicker from './TemplatePicker';
 import useTaskForm from './useTaskForm';
 
 /*
  * 添加/编辑待办弹窗：只负责 Modal 外壳和底部按钮。
  * 字段与校验复用 TaskForm / useTaskForm，提交成功后关闭弹窗。
- * 表单结构与拆分前保持一致，避免影响 Dashboard 的现有交互。
+ * 新增（非编辑）时提供两个页签：
+ *   - 手动填写：原来的表单
+ *   - 从模板选择：浏览管理员发布的活动并接取（接取后自动生成一条待办）
  */
-export default function TaskModal({ show, onHide, onSubmit, onDelete, initialData = null }) {
+export default function TaskModal({ show, onHide, onSubmit, onDelete, onClaimTemplate, initialData = null }) {
     const isEdit = !!initialData;
+    const [tab, setTab] = useState('manual');
 
     const { values, setValue, error, submitting, submit } = useTaskForm({
         initialData,
@@ -20,15 +26,39 @@ export default function TaskModal({ show, onHide, onSubmit, onDelete, initialDat
         onSuccess: onHide,
     });
 
+    const handleClaim = async (templateId) => {
+        await onClaimTemplate(templateId);
+        onHide();
+    };
+
     return (
         <Modal show={show} onHide={onHide} centered backdrop="static">
-            <Form onSubmit={submit}>
+            {!isEdit && (
                 <Modal.Header closeButton>
-                    <Modal.Title>{isEdit ? '编辑待办' : '添加待办'}</Modal.Title>
+                    <Nav variant="tabs" activeKey={tab} onSelect={(key) => setTab(key || 'manual')}>
+                        <Nav.Item>
+                            <Nav.Link eventKey="manual">手动填写</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="template">从模板选择</Nav.Link>
+                        </Nav.Item>
+                    </Nav>
                 </Modal.Header>
+            )}
+
+            <Form onSubmit={submit}>
+                {isEdit && (
+                    <Modal.Header closeButton>
+                        <Modal.Title>编辑待办</Modal.Title>
+                    </Modal.Header>
+                )}
 
                 <Modal.Body>
-                    <TaskForm values={values} onChange={setValue} error={error} />
+                    {!isEdit && tab === 'template' ? (
+                        <TemplatePicker onClaim={handleClaim} />
+                    ) : (
+                        <TaskForm values={values} onChange={setValue} error={error} />
+                    )}
                 </Modal.Body>
 
                 <Modal.Footer>
@@ -45,9 +75,11 @@ export default function TaskModal({ show, onHide, onSubmit, onDelete, initialDat
                     <Button variant="secondary" onClick={onHide} disabled={submitting}>
                         取消
                     </Button>
-                    <Button variant="primary" type="submit" disabled={submitting}>
-                        {submitting ? '提交中...' : (isEdit ? '保存' : '添加')}
-                    </Button>
+                    {!( !isEdit && tab === 'template') && (
+                        <Button variant="primary" type="submit" disabled={submitting}>
+                            {submitting ? '提交中...' : (isEdit ? '保存' : '添加')}
+                        </Button>
+                    )}
                 </Modal.Footer>
             </Form>
         </Modal>

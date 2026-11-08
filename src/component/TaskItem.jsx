@@ -16,7 +16,7 @@ function getColorClass(days) {
 }
 
 export default function TaskItem({ task, index, onComplete, onDetailClick }) {
-	const showCountdown = task.type === 'longterm';
+	const showCountdown = task.type === 'longterm' || Boolean(task.deadline);
 	const [exiting, setExiting] = useState(false);
 	const daysLeft = showCountdown ? getDaysLeft(task.deadline) : null;
 	

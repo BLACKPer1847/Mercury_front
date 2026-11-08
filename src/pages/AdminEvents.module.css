@@ -1,0 +1,51 @@
+.page {
+  padding: 1.5rem 2rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.tableWrap {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  overflow-x: auto;
+}
+
+.subText {
+  font-size: 0.78rem;
+  color: #6c757d;
+}
+
+.rowActions {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.empty {
+  padding: 3rem 0;
+  text-align: center;
+  color: #6c757d;
+}
+
+.totalInfo {
+  margin-top: 0.75rem;
+  color: #6c757d;
+  font-size: 0.9rem;
+}

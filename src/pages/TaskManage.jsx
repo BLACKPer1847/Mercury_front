@@ -66,7 +66,10 @@ function TaskManage() {
 					showBack={true}
 					onBack={() => navigate('/dashboard')}
 					actions={[
-						{ icon: 'bi-gear', label: '管理事件', variant: 'secondary', onClick: () => { } },
+						// 「管理事件」只给管理员看（后端接口另有权限校验）
+						...(auth.isAdmin()
+							? [{ icon: 'bi-gear', label: '管理事件', variant: 'secondary', onClick: () => navigate('/admin/events') }]
+							: []),
 						{ icon: 'bi-clipboard2-data', label: '管理待办', variant: 'secondary', onClick: () => navigate('/taskmanage') },
 						{ icon: 'bi-box-arrow-right', label: '登出', variant: 'dark', onClick: handleExit },
 					]}

@@ -32,6 +32,8 @@ function LoginPage() {
       // 存储 token
 			localStorage.setItem('token', data.token);
 			localStorage.setItem('username', data.username);
+			// 管理员标记：只用于显示「管理事件」入口，后端每个管理接口仍会重新校验
+			localStorage.setItem('is_admin', data.is_admin ? 'true' : 'false');
 			navigate('/dashboard'); 
     } catch (err) {
       setError(err.message);

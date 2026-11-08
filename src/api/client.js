@@ -40,9 +40,12 @@ async function request(path, options = {}) {
 // auth检查和登出工具
 export const auth = {
   isLoggedIn: () => !!localStorage.getItem('token'),
+  // 只用来决定「要不要显示管理入口」，真正的权限由后端每个管理接口校验
+  isAdmin: () => localStorage.getItem('is_admin') === 'true',
   logout: () => {
     localStorage.removeItem('token')
     localStorage.removeItem('username')
+    localStorage.removeItem('is_admin')
   },
   getUsername: () => localStorage.getItem('username'),
 }
@@ -60,6 +63,8 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify({ username, password }),
     }),
+
+  me: () => request('/me'),
 }
 
 export const taskApi = {
@@ -84,4 +89,68 @@ export const taskApi = {
 
   remove: (id) =>
     request(`/tasks/${id}`, { method: 'DELETE' }),
+}
+
+// 用户在「添加待办 → 从模板选择」里浏览/接取活动
+export const templateApi = {
+  getAll: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/templates${query ? `?${query}` : ''}`);
+  },
+
+  getOne: (id) => request(`/templates/${id}`),
+
+  claim: (id) => request(`/templates/${id}/claim`, { method: 'POST' }),
+}
+
+// 管理端接口（后端会校验 is_admin，前端隐藏入口只是体验优化）
+export const adminApi = {
+  listTemplates: (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/admin/templates${query ? `?${query}` : ''}`);
+  },
+
+  createTemplate: (data) =>
+    request('/admin/templates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateTemplate: (id, data) =>
+    request(`/admin/templates/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    }),
+
+  updateTemplateStatus: (id, status) =>
+    request(`/admin/templates/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    }),
+
+  batchPublish: (ids) =>
+    request('/admin/templates/batch-publish', {
+      method: 'POST',
+      body: JSON.stringify({ ids }),
+    }),
+
+  listCrawlSources: () => request('/admin/crawl-sources'),
+
+  createCrawlSource: (data) =>
+    request('/admin/crawl-sources', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  updateCrawlSource: (id, data) =>
+    request(`/admin/crawl-sources/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  deleteCrawlSources: (ids) =>
+    request('/admin/crawl-sources', {
+      method: 'DELETE',
+      body: JSON.stringify({ ids }),
+    }),
 }

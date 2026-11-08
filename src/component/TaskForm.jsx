@@ -13,6 +13,8 @@ import { STATUS_OPTIONS, TYPE_OPTIONS, formatDate, parseDate } from './useTaskFo
  */
 export default function TaskForm({ values, onChange, error = '', showStatus = false, showStar = false }) {
   const { title, type, status, deadline, description, is_starred } = values;
+  // 来自活动模板的任务：类型和截止日期由活动决定，后端也会拒绝修改
+  const locked = Boolean(values.template_id);
 
   return (
     <>
@@ -31,11 +33,16 @@ export default function TaskForm({ values, onChange, error = '', showStatus = fa
 
       <Form.Group className="mb-3">
         <Form.Label>待办任务类型</Form.Label>
-        <Form.Select value={type} onChange={(e) => onChange('type', e.target.value)}>
+        <Form.Select value={type} onChange={(e) => onChange('type', e.target.value)} disabled={locked}>
           {TYPE_OPTIONS.map(option => (
             <option key={option.value} value={option.value}>{option.label}</option>
           ))}
         </Form.Select>
+        {locked && (
+          <Form.Text className="text-muted">
+            这是一个活动任务，类型与时间由活动决定；标题、描述、状态和星标仍可修改。
+          </Form.Text>
+        )}
       </Form.Group>
 
       {showStatus && (
@@ -60,9 +67,13 @@ export default function TaskForm({ values, onChange, error = '', showStatus = fa
             onChange={(date) => onChange('deadline', date ? formatDate(date) : '')}
             dateFormat="yyyy/MM/dd"
             placeholderText="yyyy/MM/dd"
-            isClearable
+            isClearable={!locked}
+            disabled={locked}
             className="form-control"
           />
+          {locked && (
+            <Form.Text className="text-muted">活动任务的截止日期跟随活动结束时间，不能单独修改。</Form.Text>
+          )}
         </Form.Group>
       )}
 

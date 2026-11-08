@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
-import { taskApi, auth } from '../api/client';
+import { taskApi, templateApi, auth } from '../api/client';
 
 import TaskList from '../component/TaskList';
 import TaskModal from '../component/TaskModal';
@@ -130,6 +130,12 @@ function DashBoard() {
     }
   };
 
+  // 从活动模板接取一条待办：后端会派生任务，这里只需要刷新列表
+  const handleClaimTemplate = async (templateId) => {
+    await templateApi.claim(templateId);
+    await fetchTasks();
+  };
+
   const handleDeleteTask = async () => {
     if (!confirmDelete) return;
     const { id, originalTask } = confirmDelete;
@@ -169,7 +175,10 @@ function DashBoard() {
         <PageHeader
           actions={[
             { icon: 'bi-file-earmark-plus', label: '添加待办', variant: 'success', onClick: handleAddition },
-            { icon: 'bi-gear', label: '管理事件', variant: 'secondary', onClick: () => {} },
+            // 「管理事件」只给管理员看；后端接口同样会校验权限
+            ...(auth.isAdmin()
+              ? [{ icon: 'bi-gear', label: '管理事件', variant: 'secondary', onClick: () => navigate('/admin/events') }]
+              : []),
             { icon: 'bi-clipboard2-data', label: '管理待办', variant: 'secondary', onClick: () => navigate('/taskmanage') },
             { icon: 'bi-box-arrow-right', label: '登出', variant: 'dark', onClick: handleExit },
           ]}
@@ -222,6 +231,7 @@ function DashBoard() {
           show={showModal}
           onHide={() => setShowModal(false)}
           onSubmit={handleCreateTask}
+          onClaimTemplate={handleClaimTemplate}
         />
 
         <TaskModal

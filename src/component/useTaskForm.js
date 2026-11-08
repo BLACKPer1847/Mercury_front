@@ -28,6 +28,8 @@ export function taskToFormValues(task) {
     title: task?.title || '',
     type: task?.type || 'daily',
     status: task?.status || 'pending',
+    // 来自活动模板的任务：时间和类型锁定，但截止日期要原样带回（否则会被当成「改成空」）
+    template_id: task?.template_id ?? null,
     deadline: task?.deadline || '',
     description: task?.description || '',
     is_starred: Boolean(task?.is_starred),
@@ -35,14 +37,16 @@ export function taskToFormValues(task) {
 }
 
 // 表单值 -> 提交给后端的 payload
-// 1. 非长期任务不提交截止日期（与后端"type=daily 时 deadline 无意义"一致）
+// 1. 手动创建的每日任务不提交截止日期（与后端"type=daily 时 deadline 无意义"一致）；
+//    活动派生的任务则原样带回，避免把活动结束日期清空
 // 2. 空字符串统一转 null，交给后端 or None 兜底
 export function formValuesToPayload(values) {
+  const keepDeadline = values.type === 'longterm' || Boolean(values.template_id);
   return {
     title: values.title.trim(),
     type: values.type,
     status: values.status,
-    deadline: values.type === 'longterm' && values.deadline ? values.deadline : null,
+    deadline: keepDeadline && values.deadline ? values.deadline : null,
     description: values.description.trim() || null,
     is_starred: values.is_starred,
   };

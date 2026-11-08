@@ -6,7 +6,9 @@ import RegisterPage from './pages/Register'
 import DashBoard from './pages/Dashboard'
 import TaskManage from './pages/TaskManage'
 import TaskEdit from './pages/TaskEdit'
+import AdminEvents from './pages/AdminEvents'
 import ProtectedRoute from './component/ProtectedRoute'
+import AdminRoute from './component/AdminRoute'
 // Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 // Icon from bootstrap
@@ -48,6 +50,16 @@ function App() {
             <ProtectedRoute>
               <TaskEdit />
             </ProtectedRoute>
+          }
+        />
+
+        {/* 管理端：只有 admin 能进（后端接口另有权限校验） */}
+        <Route
+          path="/admin/events"
+          element={
+            <AdminRoute>
+              <AdminEvents />
+            </AdminRoute>
           }
         />
       </Routes>
