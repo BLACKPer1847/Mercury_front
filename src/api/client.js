@@ -101,6 +101,9 @@ export const templateApi = {
   getOne: (id) => request(`/templates/${id}`),
 
   claim: (id) => request(`/templates/${id}/claim`, { method: 'POST' }),
+
+  // 取消接取：后端会物理删除该活动派生的待办
+  cancelClaim: (id) => request(`/templates/${id}/claim`, { method: 'DELETE' }),
 }
 
 // 管理端接口（后端会校验 is_admin，前端隐藏入口只是体验优化）

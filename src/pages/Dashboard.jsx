@@ -175,6 +175,7 @@ function DashBoard() {
         <PageHeader
           actions={[
             { icon: 'bi-file-earmark-plus', label: '添加待办', variant: 'success', onClick: handleAddition },
+            { icon: 'bi-calendar-event', label: '活动广场', variant: 'primary', onClick: () => navigate('/events') },
             // 「管理事件」只给管理员看；后端接口同样会校验权限
             ...(auth.isAdmin()
               ? [{ icon: 'bi-gear', label: '管理事件', variant: 'secondary', onClick: () => navigate('/admin/events') }]

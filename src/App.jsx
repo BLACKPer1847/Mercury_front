@@ -7,6 +7,7 @@ import DashBoard from './pages/Dashboard'
 import TaskManage from './pages/TaskManage'
 import TaskEdit from './pages/TaskEdit'
 import AdminEvents from './pages/AdminEvents'
+import EventPlaza from './pages/EventPlaza'
 import ProtectedRoute from './component/ProtectedRoute'
 import AdminRoute from './component/AdminRoute'
 // Bootstrap CSS
@@ -49,6 +50,16 @@ function App() {
           element={
             <ProtectedRoute>
               <TaskEdit />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 活动广场：所有登录用户可见，只展示已发布的活动 */}
+        <Route
+          path="/events"
+          element={
+            <ProtectedRoute>
+              <EventPlaza />
             </ProtectedRoute>
           }
         />
