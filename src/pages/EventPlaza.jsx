@@ -217,7 +217,8 @@ export default function EventPlaza() {
         show={!!cancelTarget}
         title="取消接取"
         message={cancelTarget ? `确认取消接取「${cancelTarget.title}」？由它派生的待办会被删除，且无法恢复。` : ''}
-        confirmText="确认取消"
+        confirmText="我确定"
+        cancelText="再想想"
         variant="danger"
         loading={cancelling}
         onConfirm={handleCancelClaim}
