@@ -25,6 +25,21 @@ const RECURRENCE_OPTIONS = [
   { value: 'daily', label: '每天重置' },
 ];
 
+const CATEGORY_LABELS = {
+  role: '角色',
+  weapon: '武器',
+  activity: '活动',
+};
+
+// 条目标题里已经带了原生叫法（共鸣者/弧盘/光锥/人形/干员），优先用它
+function categoryLabel(item) {
+  const prefix = String(item.title || '').split('：')[0];
+  if (['共鸣者', '角色', '人形', '干员', '武器', '弧盘', '光锥'].includes(prefix)) {
+    return prefix;
+  }
+  return CATEGORY_LABELS[item.category] || '';
+}
+
 function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
   const [tab, setTab] = useState('text');
   const [gameName, setGameName] = useState('');
@@ -33,6 +48,7 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
 
   const [items, setItems] = useState([]);
   const [skipped, setSkipped] = useState(0);
+  const [skippedItems, setSkippedItems] = useState([]);
   const [selected, setSelected] = useState([]);
 
   const [error, setError] = useState('');
@@ -48,6 +64,7 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
     setUrl('');
     setItems([]);
     setSkipped(0);
+    setSkippedItems([]);
     setSelected([]);
     setError('');
     setMessage('');
@@ -59,6 +76,8 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
     setError('');
     setMessage('');
     setItems([]);
+    setSkipped(0);
+    setSkippedItems([]);
     setSelected([]);
 
     if (tab === 'text' && !text.trim()) {
@@ -78,6 +97,7 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
       const parsed = (data.items || []).map(item => ({ ...item }));
       setItems(parsed);
       setSkipped(data.skipped || 0);
+      setSkippedItems(data.skipped_items || []);
       setSelected(parsed.map((_, index) => index));
       if (parsed.length === 0) {
         setError('没有从这段正文里认出活动，可以换一段或手动创建');
@@ -220,10 +240,24 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
           {items.length > 0 && (
             <span className={styles.summary}>
               识别到 {items.length} 条
-              {skipped > 0 && `，跳过 ${skipped} 条（补偿/商城类）`}
+              {skipped > 0 && `，跳过 ${skipped} 条`}
             </span>
           )}
         </div>
+
+        {skippedItems.length > 0 && (
+          <details className={styles.skippedBox}>
+            <summary>被跳过的内容（{skippedItems.length} 条）</summary>
+            <ul className={styles.skippedList}>
+              {skippedItems.map((item, index) => (
+                <li key={index}>
+                  <span className={styles.skippedTitle}>{item.title}</span>
+                  <span className={styles.skippedReason}>{item.reason}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
+        )}
 
         {items.length > 0 && (
           <div className={styles.tableWrap}>
@@ -240,6 +274,7 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
                     />
                   </th>
                   <th style={{ minWidth: '14rem' }}>活动名称</th>
+                  <th style={{ minWidth: '5rem' }}>类别</th>
                   <th style={{ minWidth: '7rem' }}>类型</th>
                   <th style={{ minWidth: '7rem' }}>重置</th>
                   <th style={{ minWidth: '9rem' }}>开始</th>
@@ -268,6 +303,13 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
                       />
                       {item.description && (
                         <div className={styles.desc} title={item.description}>{item.description}</div>
+                      )}
+                    </td>
+                    <td>
+                      {categoryLabel(item) && (
+                        <Badge bg="light" text="dark" className={styles.categoryBadge}>
+                          {categoryLabel(item)}
+                        </Badge>
                       )}
                     </td>
                     <td>
@@ -310,7 +352,11 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
                       />
                     </td>
                     <td>
-                      {(item.warnings || []).length === 0 ? (
+                      {item.needs_review ? (
+                        <Badge bg="danger" title={(item.warnings || []).join('；')}>
+                          待复核
+                        </Badge>
+                      ) : (item.warnings || []).length === 0 ? (
                         <span className={styles.okMark}>—</span>
                       ) : (
                         <Badge bg="warning" text="dark" title={item.warnings.join('；')}>

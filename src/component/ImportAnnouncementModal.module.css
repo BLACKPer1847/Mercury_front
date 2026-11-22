@@ -34,6 +34,45 @@
   color: #adb5bd;
 }
 
+.categoryBadge {
+  border: 1px solid #dee2e6;
+  font-weight: 400;
+}
+
+.skippedBox {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.skippedBox summary {
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.skippedList {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+  max-height: 10rem;
+  overflow: auto;
+}
+
+.skippedList li {
+  margin-bottom: 0.25rem;
+}
+
+.skippedTitle {
+  margin-right: 0.5rem;
+  color: #495057;
+}
+
+.skippedReason {
+  color: #adb5bd;
+  font-size: 0.75rem;
+}
+
 .footerHint {
   margin-right: auto;
   color: #6c757d;
