@@ -14,6 +14,8 @@ import PageHeader from '../component/PageHeader';
 import Pagination from '../component/Pagination';
 import TemplateFormModal from '../component/TemplateFormModal';
 import CrawlSourceModal from '../component/CrawlSourceModal';
+import ImportAnnouncementModal from '../component/ImportAnnouncementModal';
+import InspectionCard from '../component/InspectionCard';
 import { adminApi, auth } from '../api/client';
 
 const STATUS_LABEL = { draft: '草稿', published: '已发布', archived: '已下架' };
@@ -44,6 +46,7 @@ function AdminEvents() {
   const [showForm, setShowForm] = useState(false);
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [showCrawl, setShowCrawl] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [busyId, setBusyId] = useState(null);
 
   const fetchTemplates = async () => {
@@ -142,6 +145,7 @@ function AdminEvents() {
         onBack={() => navigate('/dashboard')}
         actions={[
           { icon: 'bi-plus-lg', label: '新建活动', variant: 'success', onClick: openCreate },
+          { icon: 'bi-download', label: '导入公告', variant: 'primary', onClick: () => setShowImport(true) },
           { icon: 'bi-diagram-3', label: '管理爬虫对象', variant: 'secondary', onClick: () => setShowCrawl(true) },
           { icon: 'bi-box-arrow-right', label: '登出', variant: 'dark', onClick: handleExit },
         ]}
@@ -149,6 +153,8 @@ function AdminEvents() {
 
       {error && <Alert variant="danger">{error}</Alert>}
       {message && <Alert variant="success" dismissible onClose={() => setMessage('')}>{message}</Alert>}
+
+      <InspectionCard />
 
       <div className={styles.toolbar}>
         <Form onSubmit={handleSearch} className={styles.filters}>
@@ -306,6 +312,18 @@ function AdminEvents() {
         show={showCrawl}
         onHide={() => setShowCrawl(false)}
         games={games}
+      />
+
+      <ImportAnnouncementModal
+        show={showImport}
+        onHide={() => setShowImport(false)}
+        games={games}
+        onCreated={(created) => {
+          if (created > 0) {
+            setMessage(`已从公告导入 ${created} 条草稿，确认无误后勾选发布`);
+          }
+          fetchTemplates();
+        }}
       />
     </div>
   );

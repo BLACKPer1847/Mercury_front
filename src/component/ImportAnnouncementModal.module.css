@@ -1,0 +1,41 @@
+.summary {
+  color: #6c757d;
+  font-size: 0.875rem;
+}
+
+.tableWrap {
+  margin-top: 1rem;
+  max-height: 24rem;
+  overflow: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+}
+
+.tableWrap thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;
+  z-index: 1;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.desc {
+  margin-top: 0.25rem;
+  color: #6c757d;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 20rem;
+}
+
+.okMark {
+  color: #adb5bd;
+}
+
+.footerHint {
+  margin-right: auto;
+  color: #6c757d;
+  font-size: 0.8125rem;
+}

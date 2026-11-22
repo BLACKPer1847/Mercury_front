@@ -156,4 +156,23 @@ export const adminApi = {
       method: 'DELETE',
       body: JSON.stringify({ ids }),
     }),
+
+  // 公告导入：先解析出预览，管理员确认后再批量建草稿
+  parseAnnouncement: (text, gameName) =>
+    request('/admin/import/parse', {
+      method: 'POST',
+      body: JSON.stringify({ text, game_name: gameName }),
+    }),
+
+  parseAnnouncementUrl: (url, gameName) =>
+    request('/admin/import/url', {
+      method: 'POST',
+      body: JSON.stringify({ url, game_name: gameName }),
+    }),
+
+  batchCreateTemplates: (gameName, items) =>
+    request('/admin/templates/batch-create', {
+      method: 'POST',
+      body: JSON.stringify({ game_name: gameName, items }),
+    }),
 }

@@ -1,0 +1,75 @@
+.card {
+  border-color: #dee2e6;
+  margin-bottom: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: #f8f9fa;
+  flex-wrap: wrap;
+}
+
+.toggle {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-weight: 600;
+  color: #212529;
+  display: flex;
+  align-items: center;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.lastDate {
+  color: #6c757d;
+  font-size: 0.8125rem;
+}
+
+.hint {
+  color: #6c757d;
+  font-size: 0.8125rem;
+  margin-bottom: 0.75rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.5rem;
+}
+
+.account {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  color: #212529;
+  font-size: 0.875rem;
+}
+
+.account:hover {
+  background: #f1f3f5;
+  color: #0d6efd;
+}
+
+.accountName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.uid {
+  color: #adb5bd;
+  font-size: 0.75rem;
+}
