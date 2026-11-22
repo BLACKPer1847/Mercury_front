@@ -40,16 +40,26 @@ function categoryLabel(item) {
   return CATEGORY_LABELS[item.category] || '';
 }
 
+// 解析器只认这几套方言；手输容易拼错，统一做成下拉选项
+const PRESET_GAMES = ['鸣潮', '异环', '崩坏：星穹铁道', '明日方舟：终末地', '少女前线2：追放'];
+
 function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
   const [tab, setTab] = useState('text');
   const [gameName, setGameName] = useState('');
   const [text, setText] = useState('');
   const [url, setUrl] = useState('');
 
+  // 预置游戏在前，已有模板里出现过的其他游戏追加在后面
+  const gameOptions = [
+    ...PRESET_GAMES,
+    ...games.filter(game => !PRESET_GAMES.includes(game)),
+  ];
+
   const [items, setItems] = useState([]);
   const [skipped, setSkipped] = useState(0);
   const [skippedItems, setSkippedItems] = useState([]);
   const [selected, setSelected] = useState([]);
+  const [parsedProfile, setParsedProfile] = useState('');
 
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -63,6 +73,7 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
     setText('');
     setUrl('');
     setItems([]);
+    setParsedProfile('');
     setSkipped(0);
     setSkippedItems([]);
     setSelected([]);
@@ -76,10 +87,15 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
     setError('');
     setMessage('');
     setItems([]);
+    setParsedProfile('');
     setSkipped(0);
     setSkippedItems([]);
     setSelected([]);
 
+    if (!gameName) {
+      setError('请先选择游戏');
+      return;
+    }
     if (tab === 'text' && !text.trim()) {
       setError('请先粘贴公告正文');
       return;
@@ -96,6 +112,7 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
         : await adminApi.parseAnnouncementUrl(url.trim(), gameName.trim());
       const parsed = (data.items || []).map(item => ({ ...item }));
       setItems(parsed);
+      setParsedProfile(data.profile || '');
       setSkipped(data.skipped || 0);
       setSkippedItems(data.skipped_items || []);
       setSelected(parsed.map((_, index) => index));
@@ -186,18 +203,16 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
 
         <Form.Group className="mb-3" controlId="importGameName">
           <Form.Label>游戏名称</Form.Label>
-          <Form.Control
-            type="text"
-            list="import-game-options"
+          <Form.Select
             value={gameName}
             onChange={(e) => setGameName(e.target.value)}
-            placeholder="例如：鸣潮"
-            maxLength={50}
-          />
-          <datalist id="import-game-options">
-            {games.map(game => <option key={game} value={game} />)}
-          </datalist>
-          <Form.Text muted>公告里的条目都会挂到这个游戏下面</Form.Text>
+          >
+            <option value="">请选择游戏</option>
+            {gameOptions.map(game => <option key={game} value={game}>{game}</option>)}
+          </Form.Select>
+          <Form.Text muted>
+            解析器按游戏切换方言，选错游戏会认不出条目；公告里的条目都会挂到这个游戏下面
+          </Form.Text>
         </Form.Group>
 
         <Nav variant="tabs" activeKey={tab} onSelect={(key) => setTab(key || 'text')} className="mb-3">
@@ -241,6 +256,7 @@ function ImportAnnouncementModal({ show, onHide, games = [], onCreated }) {
             <span className={styles.summary}>
               识别到 {items.length} 条
               {skipped > 0 && `，跳过 ${skipped} 条`}
+              {parsedProfile && `（按「${parsedProfile}」规则解析）`}
             </span>
           )}
         </div>
